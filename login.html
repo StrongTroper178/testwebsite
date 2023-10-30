@@ -1,38 +1,38 @@
 <!DOCTYPE html>
 <html>
     <head>
-        <title>Sign Up</title>
+        <title>Log In</title>
     </head>
 
     <body>
-        <p>Sign Up:</p>
+        <p>Log In:</p>
         <a href="./index.html">home page</a>
-        <ul id="signup"></ul>
-        <form id="signupform" action="">
+        <ul id="login"></ul>
+        <form id="loginform" action="">
             <label for="username">username: </label><br>
             <input id="usernameinput" autocomplete="off" />
             <label for="password">password: </label><br>
             <input id="passwordinput" autocomplete="off" />
             <button>Send</button>
         </form>
-        <h4>already have an account?</h4>
-        <a href="./login.html">Log In!</a>
+        <h4>dont have an account?</h4>
+        <a href="./signup.html">Sign Up!</a>
         <script src="/socket.io/socket.io.js"></script>
         <script>
         var socket = io();
 
-        var signupform = document.getElementById('signupform');
+        var loginform = document.getElementById('loginform');
         var username = document.getElementById('usernameinput');
         var password = document.getElementById('passwordinput');
 
-        signupform.addEventListener('submit', function(e) {
+        loginform.addEventListener('submit', function(e) {
             e.preventDefault();
             if (username.value) {
-            socket.emit('signup username', username.value);
+            socket.emit('login username', username.value);
             username.value = '';
             }
             if (password.value) {
-            socket.emit('signup password', password.value);
+            socket.emit('login password', password.value);
             password.value = '';
             }
         });

@@ -35,6 +35,11 @@ app.get('/signup.html', (req, res) => {
   res.sendFile(__dirname + '/signup.html');
 });
 
+app.get('/login.html', (req, res) => {
+    console.log("requested page: login.html");
+  res.sendFile(__dirname + '/login.html');
+});
+
 //creates connection between html and node.js
 io.on('connection', (socket) => {
     socket.on('chat message', (msg) => {
@@ -44,6 +49,12 @@ io.on('connection', (socket) => {
         console.log('username: ' + username);
     });
     socket.on('signup password', (password) => {
+        console.log('password: ' + password);
+    });
+    socket.on('login username', (username) => {
+        console.log('username: ' + username);
+    });
+    socket.on('login password', (password) => {
         console.log('password: ' + password);
     });
 });
