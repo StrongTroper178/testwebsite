@@ -27,12 +27,9 @@
 
         signupform.addEventListener('submit', function(e) {
             e.preventDefault();
-            if (username.value) {
-            socket.emit('signup username', username.value);
+            if (username.value && password.value) {
+            socket.emit('signup', username.value, password.value);
             username.value = '';
-            }
-            if (password.value) {
-            socket.emit('signup password', password.value);
             password.value = '';
             }
         });

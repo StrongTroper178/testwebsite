@@ -7,6 +7,7 @@
     <body>
         <p>hello, world!</p>
         <p>I want to learn how to use github</p>
+        <div id="user">name: </div>
         <a href="./page2.html">page2 page</a><br>
         <a href="./signup.html">Sign Up!</a><br>
         <a href="./login.html">Log In!</a><br>
@@ -14,20 +15,63 @@
         <form id="form" action="">
             <input id="input" autocomplete="off" /><button>Send</button>
         </form>
+        <div id="holder"></div>
         <script src="/socket.io/socket.io.js"></script>
         <script>
-        var socket = io();
-
-        var form = document.getElementById('form');
-        var input = document.getElementById('input');
-
-        form.addEventListener('submit', function(e) {
-            e.preventDefault();
-            if (input.value) {
-            socket.emit('chat message', input.value);
-            input.value = '';
+            var socket = io();
+            var userSocket = io("/user", {auth: {token: localStorage.getItem("key"), sessionKeyCode: sessionStorage.getItem("key")}});
+            
+            if(typeof(Storage) !== "undefined") {
+                displayMessage("key: " + localStorage.getItem("key"));
+                displayMessage("key: " + sessionStorage.getItem("key"));
+                if(localStorage.getItem("key") !== null){
+                    userSocket.emit('local-key', localStorage.getItem("key"));
+                    console.log("key already has been generated!");
+                }else{
+                    var val = Math.random().toString(36).substring(7);
+                    localStorage.setItem("key", val);
+                    userSocket.emit('local-key', localStorage.getItem("key"));
+                    console.log("key: " + val);
+                }
+                if(sessionStorage.getItem("key") !== null){
+                    userSocket.emit('session-key', sessionStorage.getItem("key"));
+                    console.log("key already has been generated!");
+                }else{
+                    var val = Math.random().toString(36).substring(7);
+                    sessionStorage.setItem("key", val);
+                    userSocket.emit('session-key', sessionStorage.getItem("key"));
+                    console.log("key: " + val);
+                }
+            } else {
+                alert("web storage not supported")
+                console.log("web storage not supported");
             }
-        });
+
+            var form = document.getElementById('form');
+            var input = document.getElementById('input');
+
+            socket.on('recv-msg', message => {
+                displayMessage(message);
+            })
+
+            userSocket.emit('request-user-info');
+            userSocket.on('user-info', (username, password) => {
+                document.getElementById("user").textContent = "name: " + username;
+                displayMessage("username: " + username);
+            });
+            form.addEventListener('submit', function(e) {
+                e.preventDefault();
+                if (input.value) {
+                    socket.emit('chat message', input.value);
+                    displayMessage("key: " + localStorage.getItem("key"));
+                    input.value = '';
+                }
+            });
+            function displayMessage(message){
+                const div = document.createElement("div");
+                div.textContent = message;
+                document.getElementById("holder").append(div);
+            }
         </script>
     </body>
 </html>

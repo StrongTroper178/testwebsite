@@ -17,25 +17,39 @@
         </form>
         <h4>dont have an account?</h4>
         <a href="./signup.html">Sign Up!</a>
+        <div id="holder"></div>
         <script src="/socket.io/socket.io.js"></script>
         <script>
-        var socket = io();
+            var socket = io();
+            var userSocket = io("/user", {auth: {token: localStorage.getItem("key"), sessionKeyCode: sessionStorage.getItem("key")}});
 
-        var loginform = document.getElementById('loginform');
-        var username = document.getElementById('usernameinput');
-        var password = document.getElementById('passwordinput');
+            var loginform = document.getElementById('loginform');
+            var username = document.getElementById('usernameinput');
+            var password = document.getElementById('passwordinput');
+            userSocket.on('user-valid', (valid) => {
+                if(valid){
+                    displayMessage("successfully logged into: " + username.value);
+                }else{
+                    displayMessage("username or password incorrect!");
+                }
+            });
 
-        loginform.addEventListener('submit', function(e) {
-            e.preventDefault();
-            if (username.value) {
-            socket.emit('login username', username.value);
-            username.value = '';
+            loginform.addEventListener('submit', function(e) {
+                e.preventDefault();
+                if (username.value && password.value) {
+                    userSocket.emit('login', username.value, password.value);
+                    displayMessage("key: " + localStorage.getItem("key"));
+                    displayMessage("key: " + sessionStorage.getItem("key"));
+                    //username.value = '';
+                    //password.value = '';
+                }
+            });
+
+            function displayMessage(message){
+                const div = document.createElement("div");
+                div.textContent = message;
+                document.getElementById("holder").append(div);
             }
-            if (password.value) {
-            socket.emit('login password', password.value);
-            password.value = '';
-            }
-        });
         </script>
     </body>
 </html>

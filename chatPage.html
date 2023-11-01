@@ -1,0 +1,52 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <title>Chat</title>
+    </head>
+
+    <body>
+        <h1>Chat</h1>
+        <p>This is the chat for communicating between clients</p>
+        <div id="user">name: </div>
+        <a href="./page2.html">page2 page</a><br>
+        <a href="./signup.html">Sign Up!</a><br>
+        <a href="./login.html">Log In!</a><br>
+        <ul id="messages"></ul>
+        <form id="form" action="">
+            <input id="msgInput" autocomplete="off" />
+            <input id="roomInput" autocomplete="off" />
+            <button>Send</button>
+        </form>
+        <div id="holder"></div>
+        <script src="/socket.io/socket.io.js"></script>
+        <script>
+        var socket = io();
+        var userSocket = io("/user", {auth: {token: localStorage.getItem("key")}});
+
+        var form = document.getElementById('form');
+        var msgInputObj = document.getElementById('msgInput');
+        var roomInputObj = document.getElementById('roomInput');
+
+        socket.on('recv-msg', message => {
+            displayMessage(message);
+        })
+
+        userSocket.emit('request-user-info');
+        userSocket.on('user-info', (username, password) => {
+            document.getElementById("user").textContent = "name: " + username;
+        });
+        form.addEventListener('submit', function(e) {
+            e.preventDefault();
+            if (input.value) {
+                socket.emit('chat message', input.value);
+                input.value = '';
+            }
+        });
+        function displayMessage(message){
+            const div = document.createElement("div");
+            div.textContent = message;
+            document.getElementById("holder").append(div);
+        }
+        </script>
+    </body>
+</html>
