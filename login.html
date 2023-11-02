@@ -28,6 +28,7 @@
             var password = document.getElementById('passwordinput');
             userSocket.on('user-valid', (valid) => {
                 if(valid){
+                    sessionStorage.setItem("username", username.value);
                     displayMessage("successfully logged into: " + username.value);
                 }else{
                     displayMessage("username or password incorrect!");

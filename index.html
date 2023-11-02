@@ -39,6 +39,7 @@
                 }else{
                     var val = Math.random().toString(36).substring(7);
                     sessionStorage.setItem("key", val);
+                    sessionStorage.setItem("username", 'unknown-' + val);
                     userSocket.emit('session-key', sessionStorage.getItem("key"));
                     console.log("key: " + val);
                 }
@@ -56,7 +57,7 @@
 
             userSocket.emit('request-user-info');
             userSocket.on('user-info', (username, password) => {
-                document.getElementById("user").textContent = "name: " + username;
+                document.getElementById("user").textContent = "name: " + sessionStorage.username;
                 displayMessage("username: " + username);
             });
             form.addEventListener('submit', function(e) {
