@@ -17,22 +17,39 @@
         </form>
         <h4>already have an account?</h4>
         <a href="./login.html">Log In!</a>
+        <div id="holder"></div>
         <script src="/socket.io/socket.io.js"></script>
         <script>
-        var socket = io();
+            var socket = io();
+            var userSocket = io("/user", {auth: {token: localStorage.getItem("key"), sessionKeyCode: sessionStorage.getItem("key")}});
 
-        var signupform = document.getElementById('signupform');
-        var username = document.getElementById('usernameinput');
-        var password = document.getElementById('passwordinput');
+            var signupform = document.getElementById('signupform');
+            var username = document.getElementById('usernameinput');
+            var password = document.getElementById('passwordinput');
 
-        signupform.addEventListener('submit', function(e) {
-            e.preventDefault();
-            if (username.value && password.value) {
-            socket.emit('signup', username.value, password.value);
-            username.value = '';
-            password.value = '';
+            userSocket.on('signup-logs', (valid) => {
+                if(valid){
+                    sessionStorage.setItem("username", username.value);
+                    displayMessage("successfully signed up as: " + username.value);
+                }else{
+                    displayMessage("username or password incorrect!");
+                }
+            });
+
+            signupform.addEventListener('submit', function(e) {
+                e.preventDefault();
+                if (username.value && password.value) {
+                    socket.emit('signup', username.value, password.value, sessionStorage.getItem("key"));
+                    username.value = '';
+                    password.value = '';
+                }
+            });
+
+            function displayMessage(message){
+                const div = document.createElement("div");
+                div.textContent = message;
+                document.getElementById("holder").append(div);
             }
-        });
         </script>
     </body>
 </html>

@@ -108,10 +108,11 @@ userIo.on('connection', (socket) => {
       }
     });
   });
-  socket.on('signup', (username, password, token) => {
+  socket.on('signup', (username, password, keyCode) => {
     console.log('username: ' + username);
     console.log('password: ' + password);
-    signUpNewUser(username, password, token);
+    console.log('session key code: ' + keyCode);
+    signUpNewUser(username, password, keyCode);
 });
 });
 userIo.use((socket, next) => {
@@ -128,7 +129,12 @@ function signUpNewUser(username, password, token){
     console.log("Connected!");
     var command = "INSERT INTO authTable (token, username, password) VALUES ('" + token + "', '" + username + "', '" + password + "')";
     con.query(command, function (err, result, fields) {
+      if(err){
+        console.log("an error occured: " + err);
+        socket.emit('signup-logs', false);
+      }
       console.log(result);
+      socket.emit('signup-logs', true);
     });
   });
 }
