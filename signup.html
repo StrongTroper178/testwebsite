@@ -39,9 +39,11 @@
             signupform.addEventListener('submit', function(e) {
                 e.preventDefault();
                 if (username.value && password.value) {
-                    socket.emit('signup', username.value, password.value, sessionStorage.getItem("key"));
-                    username.value = '';
-                    password.value = '';
+                    displayMessage("submitted");
+                    displayMessage("key: " + sessionStorage.getItem("key"));
+                    userSocket.emit('signup', username.value, password.value, sessionStorage.getItem("key"));
+                    //username.value = '';
+                    //password.value = '';
                 }
             });
 
