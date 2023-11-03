@@ -26,6 +26,12 @@
             var loginform = document.getElementById('loginform');
             var username = document.getElementById('usernameinput');
             var password = document.getElementById('passwordinput');
+
+            //receiving and sending messages to clients
+            userSocket.on('send message to log in page', message => {
+                displayMessage(message);
+            });
+
             userSocket.on('user-valid', (valid) => {
                 if(valid){
                     sessionStorage.setItem("username", username.value);

@@ -27,6 +27,11 @@
             var username = document.getElementById('usernameinput');
             var password = document.getElementById('passwordinput');
 
+            //receiving and sending messages to clients
+            userSocket.on('send message to sign up page', message => {
+                displayMessage(message);
+            });
+
             userSocket.on('signup-logs', (valid) => {
                 if(valid){
                     sessionStorage.setItem("username", username.value);

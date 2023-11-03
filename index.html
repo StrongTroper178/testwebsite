@@ -9,8 +9,10 @@
         <p>I want to learn how to use github</p>
         <div id="user">name: </div>
         <a href="./page2.html">page2 page</a><br>
+        <a href="./chatPage.html">Chat With Others</a><br>
         <a href="./signup.html">Sign Up!</a><br>
         <a href="./login.html">Log In!</a><br>
+        <a href="./deleteAccount.html">Delete Account</a><br>
         <ul id="messages"></ul>
         <form id="form" action="">
             <input id="input" autocomplete="off" /><button>Send</button>
@@ -51,9 +53,13 @@
             var form = document.getElementById('form');
             var input = document.getElementById('input');
 
+            //receiving and sending messages to clients
             socket.on('recv-msg', message => {
                 displayMessage(message);
             })
+            userSocket.on('send message to index page', message => {
+                displayMessage(message);
+            });
 
             userSocket.emit('request-user-info');
             userSocket.on('user-info', (username, password) => {

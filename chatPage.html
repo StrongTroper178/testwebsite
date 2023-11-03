@@ -7,10 +7,11 @@
     <body>
         <h1>Chat</h1>
         <p>This is the chat for communicating between clients</p>
-        <div id="user">name: </div>
+        <a href="./index.html">home page</a><br>
         <a href="./page2.html">page2 page</a><br>
         <a href="./signup.html">Sign Up!</a><br>
         <a href="./login.html">Log In!</a><br>
+        <div id="user">logged to user: </div>
         <ul id="messages"></ul>
         <form id="form" action="">
             <input id="msgInput" autocomplete="off" />
@@ -27,19 +28,28 @@
         var msgInputObj = document.getElementById('msgInput');
         var roomInputObj = document.getElementById('roomInput');
 
+        //receiving and sending messages to clients
+        userSocket.on('send message to chat page', message => {
+                displayMessage(message);
+        });
         socket.on('recv-msg', message => {
             displayMessage(message);
         })
 
         userSocket.emit('request-user-info');
         userSocket.on('user-info', (username, password) => {
-            document.getElementById("user").textContent = "name: " + username;
+            document.getElementById("user").textContent = "logged to user: " + username;
         });
         form.addEventListener('submit', function(e) {
             e.preventDefault();
-            if (input.value) {
-                socket.emit('chat message', input.value);
-                input.value = '';
+            if (msgInputObj.value) {
+                if(roomInputObj.value ==""){
+                    socket.emit('chat message', msgInputObj.value);
+                    msgInputObj.value = '';
+                }else{
+                    socket.emit('room message', msgInputObj.value, roomInputObj.value);
+                    msgInputObj.value = '';
+                }
             }
         });
         function displayMessage(message){

@@ -1,0 +1,70 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <title>Log In</title>
+    </head>
+
+    <body>
+        <a href="./index.html">return to home page</a>
+        <h1>Delete Account:</h1>
+        <p>This is where you can delete your account</p>
+        <ul id="delete-user"></ul>
+        <form id="deleteAccountForm" action="">
+            <label for="username">username: </label><br>
+            <input id="usernameInput" autocomplete="off" /><br>
+            <label for="password">password: </label><br>
+            <input id="passwordInput" autocomplete="off" /><br>
+            <label for="passwordCheck">enter password again: </label><br>
+            <input id="passwordCheckInput" autocomplete="off" /><br>
+            <button>Send</button>
+        </form>
+        <h4>dont have an account?</h4>
+        <a href="./signup.html">Sign Up!</a><br>
+        <h4>dont want to delete your account?</h4>
+        <a href="./index.html">Home Page!</a><br>
+        <div id="holder"></div>
+        <script src="/socket.io/socket.io.js"></script>
+        <script>
+            var socket = io();
+            var userSocket = io("/user", {auth: {token: localStorage.getItem("key"), sessionKeyCode: sessionStorage.getItem("key")}});
+
+            var deleteAccountForm = document.getElementById('deleteAccountForm');
+            var username = document.getElementById('usernameInput');
+            var password = document.getElementById('passwordInput');
+            var passwordCheck = document.getElementById('passwordCheckInput');
+
+            //receiving and sending messages to clients
+            userSocket.on('send message to delete account page', message => {
+                displayMessage(message);
+            });
+
+            deleteAccountForm.addEventListener('submit', function(e) {
+                e.preventDefault();
+                if (username.value && password.value && passwordCheck.value) {
+                    userSocket.emit('delete-user', username.value, password.value, passwordCheck.value);
+                    displayMessage("key: " + localStorage.getItem("key"));
+                    displayMessage("key: " + sessionStorage.getItem("key"));
+                    //username.value = '';
+                    //password.value = '';
+                }
+            });
+
+            userSocket.on('password-match', (valid1) => {
+                if(valid1){
+                    if(sessionStorage.username == username.value){
+                        sessionStorage.setItem("username", 'unknown-' + sessionStorage.key);
+                    }
+                    displayMessage("successfully deleted user: " + username.value);
+                }else{
+                    displayMessage("error in deleting account: ");
+                }
+            });
+
+            function displayMessage(message){
+                const div = document.createElement("div");
+                div.textContent = message;
+                document.getElementById("holder").append(div);
+            }
+        </script>
+    </body>
+</html>
